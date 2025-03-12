@@ -1,9 +1,11 @@
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
 void new (char* category, char* name);
+void edit(char* category, char *name);
 void init_notes_directory();
 void init_home_path();
 
@@ -13,15 +15,60 @@ int main(int argc, char *argv[])
 {
     if (argc == 1 || argc > 4)
     {
-        printf("Usage: cuzinho legal\n");
+        printf("Usage: Notes\n"
+            "[new <category> <name>]\n"
+            "[edit <category> <name>]\n"
+            "[remove <category> <name>]\n"
+            "[ls --oneline]\n"
+            "[ls --full]\n");
         return -1;
     }
 
     init_home_path();
     init_notes_directory();
+
     // Validações das funções
-    New(argv[1], argv[2]);
+    switch (argv[1][0])
+    {
+        case 'n':
+            if (strcmp(argv[1], "new"))
+            {
+                new(argv[2],argv[3]);
+            }
+
+        break;
+        
+        case 'e':
+            if (strcmp(argv[1], "edit"))
+            {
+                edit(argv[2],argv[3]);
+            }
+
+        break;
+    }
+    
+//  printf("Usage: Notes\n"
+//  "[new <category> <name>]\n"
+//  "[edit <category> <name>]\n"
+//  "[remove <category> <name>]\n"
+//  "[ls --oneline]\n"
+//  "[ls --full]\n");
+    
+
+    free(notes_path);
+   
     return 0;
+}
+
+void path_validation(char* path)
+{
+    struct stat st = {0};
+    if (stat(path, &st) == -1) 
+    {
+        printf("ERROR: Directory doesn't exists!\n");
+    }
+    printf("existe");
+    return;
 }
 
 void init_home_path()
@@ -29,7 +76,7 @@ void init_home_path()
     const char *home = getenv("HOME");
     if (home == NULL) 
     {
-        printf("ERROR: Was not possible to reach %s", home);
+        printf("ERROR: Was not possible to reach %s\n", home);
         return;
     }
 
@@ -38,12 +85,13 @@ void init_home_path()
     notes_path = malloc(len);
     if (notes_path == NULL)
     {
-        printf("ERROR: Failed to check home path");
+        printf("ERROR: Failed to check home path\n");
         free(notes_path);
         return;
     }
     snprintf(notes_path, len,"%s/notes", home);
 }
+
 void init_notes_directory()
 {
    struct stat st = {0};
@@ -60,7 +108,7 @@ void create_category(const char *category)
 {
     if (category == NULL)
     {
-        printf("ERROR: Invalid category");
+        printf("ERROR: Invalid category\n");
         return;
     }
 
@@ -68,7 +116,7 @@ void create_category(const char *category)
     char *category_path = malloc(path_len);
     if (category_path == NULL)
     {
-        printf("ERROR: Was not possible to reach file");
+        printf("ERROR: Was not possible to reach file\n");
         return;
     }
 
@@ -79,7 +127,7 @@ void create_category(const char *category)
     {
         if (mkdir(category_path, 0777) != 0)
         {
-            printf("ERROR: Was not possible to reach file");
+            printf("ERROR: Was not possible to reach file\n");
         }
     }
 
@@ -93,7 +141,7 @@ void new(char *category, char *name)
 
     if (category == NULL)
     {
-        printf("Note need a category\n");
+        printf("Usage: note new <category> <name>\n");
         return;
     }
 
@@ -109,7 +157,7 @@ void new(char *category, char *name)
     char *filename = malloc(filename_size);
     if (filename == NULL)
     {
-        printf("ERROR: Failed to create a new note");
+        printf("ERROR: Failed to create a new note\n");
         return;
     }
 
@@ -118,7 +166,8 @@ void new(char *category, char *name)
     FILE *fptr = fopen(filename, "w");
     if (fptr == NULL)
     {
-        printf("Criação de arquivo não deu certo");
+        printf("ERROR: File creation was not possible\n");
+        fclose(fptr);
         free(filename);
         return;
     }
@@ -129,16 +178,22 @@ void new(char *category, char *name)
     // se não tiver tags deixe um branco.
 }
 
-void edit(char *name)
+void edit(char* category, char *name)
 {
-
+   if (category == NULL)
+   {
+        printf("Usage: note edit <category> <name>\n");
+        return;
+   }
+   
+   path_validation(category);
     // Edita o nome de um carta
     // talvez seja interessante deixar editar a categoria e as tags
 
     return;
 }
 
-void remove (char* name) {
+void removeNote (char* name) {
     
     // deleta a carta desejada
     // talvez possa deletar alguma tag ou alguma categoria
