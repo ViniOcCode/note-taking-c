@@ -62,12 +62,35 @@ int main(int argc, char *argv[])
 
 void path_validation(char* path)
 {
+    if (path == NULL)
+    {
+        printf("No path was given\n");
+        return;
+    }
+
+    size_t size = strlen(notes_path) + strlen(path) + 2;
+    char *dir = malloc(size);
+
+    if (dir == NULL)
+    {
+        printf("Was not possible reach a path\n");
+        free(dir);
+        return;
+    }
+
+    snprintf(dir, size, "%s/%s", notes_path, path);
+    
     struct stat st = {0};
-    if (stat(path, &st) == -1) 
+    if (stat(dir, &st) == -1) 
     {
         printf("ERROR: Directory doesn't exists!\n");
+        free(dir);
+        return; 
     }
-    printf("existe");
+
+    printf("existe\n");
+    free(dir);
+
     return;
 }
 
