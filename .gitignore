@@ -1,0 +1,4 @@
+/.venv
+/builddir
+/pyenv.cfg
+/menson.build
