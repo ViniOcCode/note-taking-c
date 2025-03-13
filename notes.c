@@ -86,7 +86,7 @@ void edit(char* category, char *name)
         return;
     }
 
-    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
+    snprintf(filename, filename_size, "\"%s/%s/%s.md\"", notes_path, category, name);
 
     if ((path_validation(filename)) != 0)
     {
@@ -95,7 +95,7 @@ void edit(char* category, char *name)
         return;
     }
 
-    open_editor(filename)
+    open_editor(filename);
 
     // Edita o nome de um carta
     // talvez seja interessante deixar editar a categoria e as tags
@@ -103,9 +103,9 @@ void edit(char* category, char *name)
     return;
 }
 
-void rename()
+void renameDir()
 {
-    
+    return;
 }
 
 void removeNote (char* name) {
