@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
+int path_validation(char* path);
+char* note_changes(char* category, char* name);
 void new (char* category, char* name);
 void edit(char* category, char *name);
 void init_notes_directory();
@@ -28,11 +30,11 @@ int main(int argc, char *argv[])
     init_notes_directory();
 
     // Validações das funções
-    if (strcmp(argv[1], "new"))
+    if (strcmp(argv[1], "new") == 0)
     {
         new(argv[2],argv[3]);
     }
-    else if (strcmp(argv[1], "edit"))
+    else if (strcmp(argv[1], "edit") == 0)
     {
         edit(argv[2],argv[3]);
     }
@@ -51,12 +53,12 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void path_validation(char* path)
+int path_validation(char* path)
 {
     if (path == NULL)
     {
         printf("No path was given\n");
-        return;
+        return -1;
     }
 
     size_t size = strlen(notes_path) + strlen(path) + 2;
@@ -66,7 +68,7 @@ void path_validation(char* path)
     {
         printf("Was not possible reach a path\n");
         free(dir);
-        return;
+        return -1;
     }
 
     snprintf(dir, size, "%s/%s", notes_path, path);
@@ -74,14 +76,13 @@ void path_validation(char* path)
     struct stat st = {0};
     if (stat(dir, &st) == -1) 
     {
-        printf("ERROR: Directory doesn't exists!\n");
         free(dir);
-        return; 
+        return -1; 
     }
 
     free(dir);
 
-    return;
+    return 0;
 }
 
 void init_home_path()
@@ -146,6 +147,29 @@ void create_category(const char *category)
 
     free(category_path);
 }
+
+char* note_changes(char* category, char* name)
+{
+
+    if (category == NULL || name == NULL)
+    {
+        printf("Path invalid\n");
+    }
+
+    size_t filename_size = strlen(notes_path) + strlen(category) + strlen(name) + 6;
+    char *filename = malloc(filename_size);
+
+    if (filename == NULL)
+    {
+        printf("ERROR: Failed to create a new note\n");
+        return NULL;
+    }
+
+    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
+
+    return filename;
+}
+
 void new(char *category, char *name)
 {
 
@@ -177,11 +201,11 @@ void new(char *category, char *name)
 
     snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
 
-    if (filename != NULL)
+    if (path_validation(filename) == 0)
     {
         return;
     }
-    
+
     FILE *fptr = fopen(filename, "w");
     if (fptr == NULL)
     {
@@ -205,7 +229,14 @@ void edit(char* category, char *name)
         return;
    }
    
-   path_validation(category);
+    if (path_validation(category) != 0)
+    {
+        printf("This directory doenst exist!\n");
+        return;
+    }
+
+
+
     // Edita o nome de um carta
     // talvez seja interessante deixar editar a categoria e as tags
 
