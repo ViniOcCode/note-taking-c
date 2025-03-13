@@ -16,7 +16,7 @@ int path_validation(char* path)
         return -1;
     }
 
-    size_t size = strlen(notes_path) + strlen(path) + 2;
+    size_t size = strlen(path) + 1;
     char *dir = malloc(size);
 
     if (dir == NULL)
@@ -26,7 +26,7 @@ int path_validation(char* path)
         return -1;
     }
 
-    snprintf(dir, size, "%s/%s", notes_path, path);
+    snprintf(dir, size, "%s", path);
     
     struct stat st = {0};
     if (stat(dir, &st) == -1) 
@@ -123,4 +123,33 @@ char* note_changes(char* category, char* name)
     snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
 
     return filename;
+}
+
+const char* get_editor()
+{
+    if (getenv("EDITOR") == NULL && getenv("VISUAL") == NULL)
+    {
+        return "vim";
+    }
+    
+    if (getenv("EDITOR") == NULL)
+    {
+        return getenv("VISUAL");
+    }
+
+    return getenv("EDITOR");
+}
+
+void open_editor(const char* filepath)
+{
+    size_t command_size = strlen(filepath) + strlen(get_editor()) + 2;
+    char *command = malloc(command_size);
+
+    snprintf(command, command_size,"%s %s", get_editor(), filepath);
+
+    if (system(command) != 0)
+    {
+        printf("womp womp\n");
+    }
+
 }

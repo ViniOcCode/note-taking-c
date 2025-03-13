@@ -19,7 +19,7 @@ void new(char *category, char *name)
         return;
     }
 
- create_category(category);
+    create_category(category);
 
     // se tiver nome colocar o nome desejado
     // se não tiver um nome, colocar um nome genérico
@@ -38,8 +38,11 @@ void new(char *category, char *name)
 
     snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
 
-    if (path_validation(filename) == 0)
+    if ((path_validation(filename)) == 0)
     {
+        printf("File already exists!\n");
+        open_editor(filename);
+        free(filename);
         return;
     }
 
@@ -52,6 +55,8 @@ void new(char *category, char *name)
         return;
     }
     fclose(fptr);
+
+    open_editor(filename);
 
     free(filename);
     // se tiver tag colocar as tags
@@ -72,12 +77,35 @@ void edit(char* category, char *name)
         return;
     }
 
+    size_t filename_size = strlen(notes_path) + strlen(category) + strlen(name) + 6;
+    char *filename = malloc(filename_size);
 
+    if (filename == NULL)
+    {
+        printf("ERROR: Failed to edit the note\n");
+        return;
+    }
+
+    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
+
+    if ((path_validation(filename)) != 0)
+    {
+        printf("ERROR: File not found!\n");
+        free(filename);
+        return;
+    }
+
+    open_editor(filename)
 
     // Edita o nome de um carta
     // talvez seja interessante deixar editar a categoria e as tags
 
     return;
+}
+
+void rename()
+{
+    
 }
 
 void removeNote (char* name) {

@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 {
     if (argc == 1 || argc > 4)
     {
+        printf("%s", get_editor());
         printf("Usage: Notes\n"
             "[new <category> <name>]\n"
             "[edit <category> <name>]\n"
@@ -33,12 +34,12 @@ int main(int argc, char *argv[])
     }
     else 
     { 
-    printf("Usage: Notes\n"
-    "[new <category> <name>]\n"
-    "[edit <category> <name>]\n"
-    "[remove <category> <name>]\n"
-    "[ls --oneline]\n"
-    "[ls --full]\n");
+        printf("Usage: Notes\n"
+        "[new <category> <name>]\n"
+        "[edit <category> <name>]\n"
+        "[remove <category> <name>]\n"
+        "[ls --oneline]\n"
+        "[ls --full]\n");
     }
 
     free(notes_path);
