@@ -28,32 +28,23 @@ int main(int argc, char *argv[])
     init_notes_directory();
 
     // Validações das funções
-    switch (argv[1][0])
+    if (strcmp(argv[1], "new"))
     {
-        case 'n':
-            if (strcmp(argv[1], "new"))
-            {
-                new(argv[2],argv[3]);
-            }
-
-        break;
-        
-        case 'e':
-            if (strcmp(argv[1], "edit"))
-            {
-                edit(argv[2],argv[3]);
-            }
-
-        break;
+        new(argv[2],argv[3]);
     }
-    
-//  printf("Usage: Notes\n"
-//  "[new <category> <name>]\n"
-//  "[edit <category> <name>]\n"
-//  "[remove <category> <name>]\n"
-//  "[ls --oneline]\n"
-//  "[ls --full]\n");
-    
+    else if (strcmp(argv[1], "edit"))
+    {
+        edit(argv[2],argv[3]);
+    }
+    else 
+    { 
+    printf("Usage: Notes\n"
+    "[new <category> <name>]\n"
+    "[edit <category> <name>]\n"
+    "[remove <category> <name>]\n"
+    "[ls --oneline]\n"
+    "[ls --full]\n");
+    }
 
     free(notes_path);
    
@@ -88,7 +79,6 @@ void path_validation(char* path)
         return; 
     }
 
-    printf("existe\n");
     free(dir);
 
     return;
@@ -168,7 +158,7 @@ void new(char *category, char *name)
         return;
     }
 
-    create_category(category);
+ create_category(category);
 
     // se tiver nome colocar o nome desejado
     // se não tiver um nome, colocar um nome genérico
@@ -178,6 +168,7 @@ void new(char *category, char *name)
 
     size_t filename_size = strlen(notes_path) + strlen(category) + strlen(name) + 6;
     char *filename = malloc(filename_size);
+
     if (filename == NULL)
     {
         printf("ERROR: Failed to create a new note\n");
@@ -186,6 +177,11 @@ void new(char *category, char *name)
 
     snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
 
+    if (filename != NULL)
+    {
+        return;
+    }
+    
     FILE *fptr = fopen(filename, "w");
     if (fptr == NULL)
     {
