@@ -8,6 +8,18 @@
 
 char *notes_path = NULL;
 
+size_t sizeToNote(char *category, char *name)
+{
+    if (category == NULL)
+    {
+        printf("ERROR: NULL category");
+        return 0;
+    }
+
+    size_t sizeToNote = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
+
+    return sizeToNote;
+}
 int path_validation(char* path)
 {
     if (path == NULL)

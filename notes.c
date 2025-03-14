@@ -7,6 +7,7 @@
 #include "notes.h"
 #include "utils.h"
 
+
 void new(char *category, char *name)
 {
 
@@ -27,15 +28,13 @@ void new(char *category, char *name)
     char *default_name = "new_note";
     name = (name != NULL) ? name : default_name;
 
-    size_t filename_size = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
-    char *filename = malloc(filename_size + 1);
-
+    char *filename = malloc(sizeToNote + 1);
     if (filename == NULL)
     {
         printf("ERROR: Failed to create a new note\n");
         return;
     }
-    snprintf(filename, filename_size + 1, "%s/%s/%s.md", notes_path, category, name);
+    snprintf(filename, sizeToNote + 1, "%s/%s/%s.md", notes_path, category, name);
 
 
     if ((path_validation(filename)) == 0)
@@ -76,16 +75,14 @@ void edit(char* category, char *name)
         return;
     }
 
-    size_t filename_size = strlen(notes_path) + strlen(category) + strlen(name) + 6;
-    char *filename = malloc(filename_size);
 
+    char *filename = malloc(sizeToNote + 1);
     if (filename == NULL)
     {
         printf("ERROR: Failed to edit the note\n");
         return;
     }
-
-    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
+    snprintf(filename, sizeToNote + 1, "%s/%s/%s.md", notes_path, category, name);
 
     if ((path_validation(filename)) != 0)
     {
