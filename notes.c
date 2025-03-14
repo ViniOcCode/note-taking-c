@@ -27,16 +27,16 @@ void new(char *category, char *name)
     char *default_name = "new_note";
     name = (name != NULL) ? name : default_name;
 
-    size_t filename_size = strlen(notes_path) + strlen(category) + strlen(name) + 6;
-    char *filename = malloc(filename_size);
+    size_t filename_size = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
+    char *filename = malloc(filename_size + 1);
 
     if (filename == NULL)
     {
         printf("ERROR: Failed to create a new note\n");
         return;
     }
+    snprintf(filename, filename_size + 1, "%s/%s/%s.md", notes_path, category, name);
 
-    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
 
     if ((path_validation(filename)) == 0)
     {
@@ -50,7 +50,6 @@ void new(char *category, char *name)
     if (fptr == NULL)
     {
         printf("ERROR: File creation was not possible\n");
-        fclose(fptr);
         free(filename);
         return;
     }
@@ -86,7 +85,7 @@ void edit(char* category, char *name)
         return;
     }
 
-    snprintf(filename, filename_size, "\"%s/%s/%s.md\"", notes_path, category, name);
+    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
 
     if ((path_validation(filename)) != 0)
     {
