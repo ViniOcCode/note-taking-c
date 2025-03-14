@@ -1,12 +1,5 @@
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/stat.h>
-
 #include "notes.h"
 #include "utils.h"
-
 
 // create a new note
 void new(char *category, char *name)
@@ -36,7 +29,11 @@ void new(char *category, char *name)
         printf("ERROR: Failed to create a new note\n");
         return;
     }
+
+    // I really wanted to check white spaces in name here, 
+    // but i didnt found how to, in a simple way.
     snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
+   
 
     if ((path_validation(filename)) == 0)
     {
@@ -58,8 +55,6 @@ void new(char *category, char *name)
     open_editor(filename);
 
     free(filename);
-    // se tiver tag colocar as tags
-    // se não tiver tags deixe um branco.
 }
 
 // opens a note to edit
@@ -101,12 +96,93 @@ void renameDir()
     return;
 }
 
-void removeNote (char* name) {
+int removeNote (char* category, char* name)
+{
+    char *answer;
     
+    if (category == NULL)
+    {
+        printf("ERROR: Directory not found\n");
+        return -1;
+    }
+
+    if (name == NULL)
+    {
+        char *anwser = printf("Do you want remove '%s' directory? y/n\n", category);
+        scanf("%c", &anwser);
+
+        if (tolower(anwser) == 'n')
+            return -1;
+        else if (tolower(anwser) != 's')
+            return -1;
+
+        if (strlen(anwser) == 1)
+        {
+            printf("Only one charcter, please!\n");
+            return -1;
+        }
+        size_t size = sizeToNote(category, name);
+        char *dirpath = malloc(size);
+
+        snprintf(dirpath, size, "%s/%s/", notes_path, category);
+        
+        if (path_validation(dirpath) != 0)
+        {
+            printf("Directory already doesn't exists!\n");
+            free(dirpath);
+            return -1;
+        }
+
+        if (dirpath == NULL)
+        {
+            printf("ERROR: Finding file to remove\n");
+            free(dirpath);
+            return -1;
+        }
+
+        if (nftw(dirpath, removerf, 10, FTW_DEPTH) == -1)
+        {
+            perror("Couldn't pass directory\n");
+            free(dirpath);
+            return EXIT_FAILURE;
+        }
+
+        printf("Directory '%s' removed sucessfully", category);
+        free(dirpath);
+        return EXIT_SUCCESS;
+    }
+
+    size_t size = sizeToNote(category, name);
+    char *dirpath = malloc(size);
+
+    snprintf(dirpath, size, "%s/%s/%s.md", notes_path, category, name);
+
+    if (path_validation(dirpath) != 0)
+    {
+        printf("Directory already doesn't exists!\n");
+        free(dirpath);
+        return -1;
+    }
+
+    if (dirpath == NULL)
+    {
+        printf("ERROR: Finding file to remove\n");
+        free(dirpath);
+        return -1;
+    }
+
+    if (unlink(dirpath) == 0)
+    {
+        printf("File '%s' removed sucessfully!\n", name);
+        free(dirpath);
+        return EXIT_SUCCESS;
+    }
+
+    perror("Error removing file\n");
+    return EXIT_FAILURE;
+
     // deleta a carta desejada
     // talvez possa deletar alguma tag ou alguma categoria
-
-    return;
 }
 
 void backlink (char* keyword) {

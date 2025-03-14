@@ -1,9 +1,3 @@
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/stat.h>
-
 #include "utils.h"
 
 char *notes_path = NULL;
@@ -15,11 +9,18 @@ size_t sizeToNote(char *category, char *name)
         printf("ERROR: NULL category");
         return 0;
     }
-
+    
+    if (name == NULL || *name == '\0')
+    {
+        size_t sizeToNote = snprintf(NULL, 0, "%s/%s/", notes_path, category);
+        return sizeToNote;
+    }
     size_t sizeToNote = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
 
     return sizeToNote;
 }
+
+// This is for checking if a folder or a file is created
 int path_validation(char* path)
 {
     if (path == NULL)
@@ -137,29 +138,59 @@ char* note_changes(char* category, char* name)
 
 const char* get_editor()
 {
-    if (getenv("EDITOR") == NULL && getenv("VISUAL") == NULL)
+    // Had to do change this because was
+    // actually '\0', and i forgor that
+    // and was doing NULL
+
+    const char* editor = getenv("EDITOR");
+    const char* visual = getenv("VISUAL");
+
+    if ((editor == NULL || *editor == '\0') && (visual == NULL || *visual == '\0'))
     {
         return "vim";
     }
     
-    if (getenv("EDITOR") == NULL)
+    if (editor == NULL || *editor == '\0')
     {
-        return getenv("VISUAL");
+        return visual;
     }
 
-    return getenv("EDITOR");
+
+    return editor;
 }
 
 void open_editor(const char* filepath)
 {
     size_t command_size =  snprintf(NULL, 0,"%s %s", get_editor(), filepath);
-    char *command = malloc(command_size);
+    char *command = malloc(command_size + 1);
 
-    snprintf(command, command_size,"%s %s", get_editor(), filepath);
+    snprintf(command, command_size + 1,"%s %s", get_editor(), filepath);
 
     if (system(command) != 0)
     {
-        printf("womp womp\n");
+        printf("Editor was not possible to open\n");
     }
 
+}
+
+// nftw directory seek
+int removerf(const char *path, const struct stat *file_info, int item_type, struct FTW *nftw_info)
+{
+    int removal_result;
+
+    if (item_type == FTW_D)
+    {
+        removal_result =rmdir(path);
+    } else
+    {
+        removal_result = unlink(path);
+    }
+
+    if (removal_result == -1)
+    {
+        perror(path);
+        return 0;
+    }
+
+    return 0;
 }

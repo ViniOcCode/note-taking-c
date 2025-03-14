@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
 {
     if (argc == 1 || argc > 4)
     {
-        printf("%s", get_editor());
         printf("Usage: Notes\n"
             "[new <category> <name>]\n"
             "[edit <category> <name>]\n"
@@ -18,6 +17,16 @@ int main(int argc, char *argv[])
             "[ls --oneline]\n"
             "[ls --full]\n");
         return -1;
+    }
+
+    if (get_editor() == "vim")
+    {
+        printf("Vim defined as default\n"
+            "if you want to choose one different, do: \n"
+            "export EDITOR=<text editor>\n"
+            "or export VISUAL=<text editor>\n"
+            "in your terminal."
+            );
     }
 
     init_home_path();
