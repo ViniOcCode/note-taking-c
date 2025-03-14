@@ -8,11 +8,12 @@
 #include "utils.h"
 
 
+// create a new note
 void new(char *category, char *name)
 {
 
-    // criar uma nota, com uma categoria obrigatória
-    // se não tiver uma categoria não deixe criar
+    // Category can't be null. 
+    // Has to have an argument to create a folder.
 
     if (category == NULL)
     {
@@ -22,20 +23,20 @@ void new(char *category, char *name)
 
     create_category(category);
 
-    // se tiver nome colocar o nome desejado
-    // se não tiver um nome, colocar um nome genérico
+    // If name is null define a default name.
+    if (name == NULL)
+    {
+        name = "new_note";
+    }
 
-    char *default_name = "new_note";
-    name = (name != NULL) ? name : default_name;
-
-    char *filename = malloc(sizeToNote + 1);
+    size_t size = sizeToNote(category, name) + 1;
+    char *filename = malloc(size);
     if (filename == NULL)
     {
         printf("ERROR: Failed to create a new note\n");
         return;
     }
-    snprintf(filename, sizeToNote + 1, "%s/%s/%s.md", notes_path, category, name);
-
+    snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
 
     if ((path_validation(filename)) == 0)
     {
@@ -61,46 +62,42 @@ void new(char *category, char *name)
     // se não tiver tags deixe um branco.
 }
 
+// opens a note to edit
 void edit(char* category, char *name)
 {
-   if (category == NULL)
-   {
+    if (category == NULL)
+    {
         printf("Usage: note edit <category> <name>\n");
         return;
-   }
-   
-    if (path_validation(category) != 0)
-    {
-        printf("This directory doenst exist!\n");
-        return;
     }
-
-
-    char *filename = malloc(sizeToNote + 1);
+   
+    size_t size = sizeToNote(category, name) + 1;
+    char *filename = malloc(size);
     if (filename == NULL)
     {
         printf("ERROR: Failed to edit the note\n");
         return;
     }
-    snprintf(filename, sizeToNote + 1, "%s/%s/%s.md", notes_path, category, name);
+    snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
 
     if ((path_validation(filename)) != 0)
     {
-        printf("ERROR: File not found!\n");
+        printf("ERROR: File or directory not found!\n");
         free(filename);
         return;
     }
 
     open_editor(filename);
 
-    // Edita o nome de um carta
-    // talvez seja interessante deixar editar a categoria e as tags
 
     return;
 }
 
 void renameDir()
 {
+    // Edita o nome de um carta
+    // talvez seja interessante deixar editar a categoria e as tags
+
     return;
 }
 

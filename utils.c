@@ -41,9 +41,11 @@ int path_validation(char* path)
     snprintf(dir, size, "%s", path);
     
     struct stat st = {0};
+    // If directory does not exist.
     if (stat(dir, &st) == -1) 
     {
         free(dir);
+        // return -1
         return -1; 
     }
 
@@ -75,8 +77,7 @@ void init_home_path()
 
 void init_notes_directory()
 {
-   struct stat st = {0};
-   if (stat(notes_path, &st) == -1) 
+   if (path_validation(notes_path) != 0) 
    {
         if (mkdir(notes_path, 0777) != 0)
         {
@@ -87,29 +88,26 @@ void init_notes_directory()
 
 void create_category(const char *category)
 {
-    if (category == NULL)
-    {
-        printf("ERROR: Invalid category\n");
-        return;
-    }
-
-    size_t path_len = strlen(notes_path) + strlen(category) + 2;
+    size_t path_len = snprintf(NULL, 0, "%s/%s", notes_path, category);
     char *category_path = malloc(path_len);
     if (category_path == NULL)
     {
         printf("ERROR: Was not possible to reach file\n");
+        free(category_path);
+        return;
+    }
+    snprintf(category_path, path_len + 1, "%s/%s", notes_path, category);
+
+    // If folder already exists just return.
+    if (path_validation(category_path) == 0)
+    {
+        free(category_path);
         return;
     }
 
-    snprintf(category_path, path_len, "%s/%s", notes_path, category);
-
-    struct stat st = {0};
-    if (stat(category_path, &st) == -1)
+    if (mkdir(category_path, 0777) != 0)
     {
-        if (mkdir(category_path, 0777) != 0)
-        {
-            printf("ERROR: Was not possible to reach file\n");
-        }
+        printf("ERROR: Was not possible to reach file\n");
     }
 
     free(category_path);
@@ -123,8 +121,8 @@ char* note_changes(char* category, char* name)
         printf("Path invalid\n");
     }
 
-    size_t filename_size = strlen(notes_path) + strlen(category) + strlen(name) + 6;
-    char *filename = malloc(filename_size);
+    size_t size = sizeToNote(category, name);
+    char *filename = malloc(size + 1);
 
     if (filename == NULL)
     {
@@ -132,7 +130,7 @@ char* note_changes(char* category, char* name)
         return NULL;
     }
 
-    snprintf(filename, filename_size, "%s/%s/%s.md", notes_path, category, name);
+    snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
 
     return filename;
 }
@@ -154,7 +152,7 @@ const char* get_editor()
 
 void open_editor(const char* filepath)
 {
-    size_t command_size = strlen(filepath) + strlen(get_editor()) + 2;
+    size_t command_size =  snprintf(NULL, 0,"%s %s", get_editor(), filepath);
     char *command = malloc(command_size);
 
     snprintf(command, command_size,"%s %s", get_editor(), filepath);

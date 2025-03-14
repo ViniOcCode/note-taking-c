@@ -10,5 +10,6 @@ void init_home_path();
 void create_category(const char *category);
 const char* get_editor();
 void open_editor(const char* filepath);
+size_t sizeToNote(char *category, char *name);
 
 #endif
