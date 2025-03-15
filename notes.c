@@ -22,8 +22,10 @@ void new(char *category, char *name)
         name = "new_note";
     }
 
-    
+    printf("chegue aqui");
     char *filename = pathlloc(category, name);
+    printf("%s", filename);
+
     if ((path_validation(filename)) == 0)
     {
         printf("File already exists!\n");

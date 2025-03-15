@@ -6,21 +6,18 @@ size_t sizeCheck(char *category, char *name)
 {
     if (category == NULL)
     {
-        printf("ERROR: NULL category");
+        printf("ERROR: NULL category\n");
         return 0;
     }
     
     if (name == NULL || *name == '\0')
     {
-        size_t sizeCheck = snprintf(NULL, 0, "%s/%s/", notes_path, category);
-        return sizeCheck;
+        return snprintf(NULL, 0, "%s/%s/", notes_path, category);
     }
-    size_t sizeCheck = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
-
-    return sizeCheck;
+    return  snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
 }
 
-const char *pathlloc(char *category, char* name)
+char *pathlloc(char *category, char* name)
 {
     if (category == NULL) 
     {
@@ -28,35 +25,20 @@ const char *pathlloc(char *category, char* name)
         return notes_path;
     }
 
-    if (name == NULL)
-    {
-
-        size_t size = sizeCheck(category, name);
-        char *memlloc = malloc(size + 1);
-
-        snprintf(memlloc, size + 1, "%s/%s", notes_path, category);
-        if (memlloc == NULL)
-        {
-            printf("Was not possible to allocate memory\n");
-            free(memlloc);
-            return notes_path;
-        }
-
-        return memlloc;
-    }
-
     size_t size = sizeCheck(category, name);
     char *memlloc = malloc(size + 1);
     if (memlloc == NULL)
     {
         printf("Was not possible to allocate memory\n");
-        free(memlloc);
         return notes_path;
     }
-    snprintf(memlloc, size, "%s/%s/%s.md", notes_path, category, name);
+
+    if (name == NULL)
+        snprintf(memlloc, size + 1, "%s/%s", notes_path, category);
+    else
+        snprintf(memlloc, size, "%s/%s/%s.md", notes_path, category, name);
 
     return memlloc;
-
 }
 
 // This is for checking if a folder or a file is created
@@ -128,16 +110,13 @@ void init_notes_directory()
 
 void create_category(const char *category)
 {
-    size_t path_len = snprintf(NULL, 0, "%s/%s", notes_path, category);
-    char *category_path = malloc(path_len);
-    if (category_path == NULL)
+    if (category = NULL)
     {
-        printf("ERROR: Was not possible to reach file\n");
-        free(category_path);
+        printf("ERROR: NULL Category\n");
         return;
     }
-    snprintf(category_path, path_len + 1, "%s/%s", notes_path, category);
 
+    char *category_path = pathlloc(category, NULL);
     // If folder already exists just return.
     if (path_validation(category_path) == 0)
     {
@@ -153,25 +132,15 @@ void create_category(const char *category)
     free(category_path);
 }
 
-char* note_changes(char* category, char* name)
+char *note_changes(char* category, char* name)
 {
-
     if (category == NULL || name == NULL)
     {
         printf("Path invalid\n");
-    }
-
-    size_t size = sizeCheck(category, name);
-    char *filename = malloc(size + 1);
-
-    if (filename == NULL)
-    {
-        printf("ERROR: Failed to create a new note\n");
         return NULL;
     }
 
-    snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
-
+    char *filename = pathlloc(category, name);
     return filename;
 }
 
@@ -215,21 +184,10 @@ void open_editor(const char* filepath)
 // nftw directory seek
 int removerf(const char *path, const struct stat *file_info, int item_type, struct FTW *nftw_info)
 {
-    int removal_result;
-
-    if (item_type == FTW_D)
-    {
-        removal_result =rmdir(path);
-    } else
-    {
-        removal_result = unlink(path);
-    }
-
-    if (removal_result == -1)
-    {
+    int result = (item_type == FTW_D) ? rmdir(path) : unlink(path);
+    if (result == -1)
+    {   
         perror(path);
-        return 0;
     }
-
     return 0;
 }

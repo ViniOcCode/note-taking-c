@@ -4,13 +4,13 @@
 #define _XOPEN_SOURCE 700 // Habilita recursos POSIX, incluindo nftw
 
 #include <ftw.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/stat.h>
 
 extern char *notes_path;
 
@@ -27,7 +27,7 @@ int removerf(const char *path,
 
 char* note_changes(char* category, char* name);
 const char* get_editor();
-const char *pathlloc(char *category, char* name);
+char *pathlloc(char *category, char* name);
 
 size_t sizeCheck(char *category, char *name);
 
