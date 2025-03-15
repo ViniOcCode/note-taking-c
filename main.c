@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if (get_editor() == "vim")
+    if (strcmp(get_editor(), "vim") == 0)
     {
         printf("Vim defined as default\n"
             "if you want to choose one different, do: \n"

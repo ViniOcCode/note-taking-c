@@ -17,7 +17,7 @@ size_t sizeCheck(char *category, char *name)
     return  snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
 }
 
-char *pathlloc(char *category, char* name)
+char *pathlloc(char *category, char *name)
 {
     if (category == NULL) 
     {
@@ -36,7 +36,7 @@ char *pathlloc(char *category, char* name)
     if (name == NULL)
         snprintf(memlloc, size + 1, "%s/%s", notes_path, category);
     else
-        snprintf(memlloc, size, "%s/%s/%s.md", notes_path, category, name);
+        snprintf(memlloc, size + 1, "%s/%s/%s.md", notes_path, category, name);
 
     return memlloc;
 }
@@ -108,9 +108,9 @@ void init_notes_directory()
    }
 }
 
-void create_category(const char *category)
+void create_category(char *category)
 {
-    if (category = NULL)
+    if (category == NULL)
     {
         printf("ERROR: NULL Category\n");
         return;
@@ -190,4 +190,24 @@ int removerf(const char *path, const struct stat *file_info, int item_type, stru
         perror(path);
     }
     return 0;
+}
+
+int confirm_removal(char *category)
+{
+    char response;
+
+    while (1)
+    {
+        printf("Do you want remove '%s' directory? y/n\n", category);
+        response = fgetc(stdin);
+        response = tolower(response);
+
+        if (response == 'y') return 0;
+        if (response == 'n')
+        {
+            printf("Operation canceled.\n");
+            return -1;
+        }
+        printf("Invalid input. Please enter 'y' or 'n'.\n");
+    }
 }

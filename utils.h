@@ -16,7 +16,7 @@ extern char *notes_path;
 
 void init_notes_directory();
 void init_home_path();
-void create_category(const char *category);
+void create_category(char *category);
 void open_editor(const char* filepath);
 
 int path_validation(char* path);

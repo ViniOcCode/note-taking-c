@@ -78,7 +78,7 @@ void renameDir()
 
 int removeNote (char* category, char* name)
 {
-    char *answer;
+    char response;
     
     if (category == NULL)
     {
@@ -88,19 +88,6 @@ int removeNote (char* category, char* name)
 
     if (name == NULL)
     {
-        char *anwser = printf("Do you want remove '%s' directory? y/n\n", category);
-        scanf("%c", &anwser);
-
-        if (tolower(anwser) == 'n')
-            return -1;
-        else if (tolower(anwser) != 's')
-            return -1;
-
-        if (strlen(anwser) == 1)
-        {
-            printf("Only one charcter, please!\n");
-            return -1;
-        }
         size_t size = sizeCheck(category, name);
         char *dirpath = malloc(size);
 
