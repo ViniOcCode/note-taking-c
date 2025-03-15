@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define _XOPEN_SOURCE 700 // Habilita recursos POSIX, incluindo nftw
+#define _XOPEN_SOURCE 700 
 
 #include <ftw.h>
 #include <sys/stat.h>
@@ -20,6 +20,8 @@ void create_category(char *category);
 void open_editor(const char* filepath);
 
 int path_validation(char* path);
+int handle_path(char *dirpath, char *category, char * name);
+int confirm_removal(char *category, char *name);
 int removerf(const char *path, 
             const struct stat *file_info, 
             int item_type,

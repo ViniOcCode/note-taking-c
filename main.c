@@ -19,16 +19,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if (strcmp(get_editor(), "vim") == 0)
-    {
-        printf("Vim defined as default\n"
-            "if you want to choose one different, do: \n"
-            "export EDITOR=<text editor>\n"
-            "or export VISUAL=<text editor>\n"
-            "in your terminal."
-            );
-    }
-
     init_home_path();
     init_notes_directory();
 
@@ -40,6 +30,10 @@ int main(int argc, char *argv[])
     else if (strcmp(argv[1], "edit") == 0)
     {
         edit(argv[2],argv[3]);
+    }
+    else if (strcmp(argv[1], "remove") == 0)
+    {
+        removeNote(argv[2],argv[3]);
     }
     else 
     { 

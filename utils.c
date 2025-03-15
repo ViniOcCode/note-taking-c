@@ -192,13 +192,14 @@ int removerf(const char *path, const struct stat *file_info, int item_type, stru
     return 0;
 }
 
-int confirm_removal(char *category)
+int confirm_removal(char *category, char *name)
 {
     char response;
-
     while (1)
     {
-        printf("Do you want remove '%s' directory? y/n\n", category);
+        printf("Do you want to remove %s '%s'? y/n\n", name ? "file" : "directory",
+                                                       name ? name : category
+                                                    );
         response = fgetc(stdin);
         response = tolower(response);
 
@@ -210,4 +211,42 @@ int confirm_removal(char *category)
         }
         printf("Invalid input. Please enter 'y' or 'n'.\n");
     }
+}
+
+int handle_path(char *dirpath, char *category, char *name)
+{
+    printf("%s", dirpath);
+    if (dirpath == NULL)
+    {
+        printf("ERROR: Finding file to remove.\n");
+        return - 1;
+    }
+
+    if (path_validation(dirpath) != 0)
+    {
+        printf("%s", dirpath);
+        printf("%s already doesn't exist!\n", name ? "File" : "Directory");
+        return -1;
+    }
+
+    if (name == NULL)
+    {
+        if (nftw(dirpath, removerf, 10, FTW_DEPTH) == -1)
+        {
+            perror("Couldn't pass directory\n");
+            return EXIT_FAILURE;
+        }
+        printf("Directory '%s' removed sucessfully", category);
+    }
+    else
+    {
+        if (unlink(dirpath) != 0)
+        {
+            perror("Error removing file\n");
+            return EXIT_FAILURE;
+        }
+        printf("File '%s' removed sucessfully!\n", name);
+    }
+
+    return EXIT_SUCCESS;
 }

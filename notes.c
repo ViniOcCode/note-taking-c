@@ -76,80 +76,22 @@ void renameDir()
     return;
 }
 
-int removeNote (char* category, char* name)
+void removeNote(char* category, char* name)
 {
-    char response;
-    
     if (category == NULL)
     {
-        printf("ERROR: Directory not found\n");
-        return -1;
+        printf("Category cant be null.\n");
+        return;
     }
 
-    if (name == NULL)
-    {
-        size_t size = sizeCheck(category, name);
-        char *dirpath = malloc(size);
+    if ((confirm_removal(category, name)) != 0)
+        return;
 
-        snprintf(dirpath, size, "%s/%s/", notes_path, category);
-        
-        if (path_validation(dirpath) != 0)
-        {
-            printf("Directory already doesn't exists!\n");
-            free(dirpath);
-            return -1;
-        }
+    char *dirpath = pathlloc(category, name);
+    handle_path(dirpath, category, name);
 
-        if (dirpath == NULL)
-        {
-            printf("ERROR: Finding file to remove\n");
-            free(dirpath);
-            return -1;
-        }
-
-        if (nftw(dirpath, removerf, 10, FTW_DEPTH) == -1)
-        {
-            perror("Couldn't pass directory\n");
-            free(dirpath);
-            return EXIT_FAILURE;
-        }
-
-        printf("Directory '%s' removed sucessfully", category);
-        free(dirpath);
-        return EXIT_SUCCESS;
-    }
-
-    size_t size = sizeCheck(category, name);
-    char *dirpath = malloc(size);
-
-    snprintf(dirpath, size, "%s/%s/%s.md", notes_path, category, name);
-
-    if (path_validation(dirpath) != 0)
-    {
-        printf("Directory already doesn't exists!\n");
-        free(dirpath);
-        return -1;
-    }
-
-    if (dirpath == NULL)
-    {
-        printf("ERROR: Finding file to remove\n");
-        free(dirpath);
-        return -1;
-    }
-
-    if (unlink(dirpath) == 0)
-    {
-        printf("File '%s' removed sucessfully!\n", name);
-        free(dirpath);
-        return EXIT_SUCCESS;
-    }
-
-    perror("Error removing file\n");
-    return EXIT_FAILURE;
-
-    // deleta a carta desejada
-    // talvez possa deletar alguma tag ou alguma categoria
+    free(dirpath);
+    return; 
 }
 
 void backlink (char* keyword) {
