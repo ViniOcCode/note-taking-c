@@ -2,7 +2,7 @@
 
 char *notes_path = NULL;
 
-size_t sizeToNote(char *category, char *name)
+size_t sizeCheck(char *category, char *name)
 {
     if (category == NULL)
     {
@@ -12,12 +12,51 @@ size_t sizeToNote(char *category, char *name)
     
     if (name == NULL || *name == '\0')
     {
-        size_t sizeToNote = snprintf(NULL, 0, "%s/%s/", notes_path, category);
-        return sizeToNote;
+        size_t sizeCheck = snprintf(NULL, 0, "%s/%s/", notes_path, category);
+        return sizeCheck;
     }
-    size_t sizeToNote = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
+    size_t sizeCheck = snprintf(NULL, 0, "%s/%s/%s.md", notes_path, category, name);
 
-    return sizeToNote;
+    return sizeCheck;
+}
+
+const char *pathlloc(char *category, char* name)
+{
+    if (category == NULL) 
+    {
+        printf("ERROR\n");
+        return notes_path;
+    }
+
+    if (name == NULL)
+    {
+
+        size_t size = sizeCheck(category, name);
+        char *memlloc = malloc(size + 1);
+
+        snprintf(memlloc, size + 1, "%s/%s", notes_path, category);
+        if (memlloc == NULL)
+        {
+            printf("Was not possible to allocate memory\n");
+            free(memlloc);
+            return notes_path;
+        }
+
+        return memlloc;
+    }
+
+    size_t size = sizeCheck(category, name);
+    char *memlloc = malloc(size + 1);
+    if (memlloc == NULL)
+    {
+        printf("Was not possible to allocate memory\n");
+        free(memlloc);
+        return notes_path;
+    }
+    snprintf(memlloc, size, "%s/%s/%s.md", notes_path, category, name);
+
+    return memlloc;
+
 }
 
 // This is for checking if a folder or a file is created
@@ -42,11 +81,11 @@ int path_validation(char* path)
     snprintf(dir, size, "%s", path);
     
     struct stat st = {0};
+
     // If directory does not exist.
     if (stat(dir, &st) == -1) 
     {
         free(dir);
-        // return -1
         return -1; 
     }
 
@@ -122,7 +161,7 @@ char* note_changes(char* category, char* name)
         printf("Path invalid\n");
     }
 
-    size_t size = sizeToNote(category, name);
+    size_t size = sizeCheck(category, name);
     char *filename = malloc(size + 1);
 
     if (filename == NULL)

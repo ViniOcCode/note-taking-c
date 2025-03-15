@@ -22,19 +22,8 @@ void new(char *category, char *name)
         name = "new_note";
     }
 
-    size_t size = sizeToNote(category, name) + 1;
-    char *filename = malloc(size);
-    if (filename == NULL)
-    {
-        printf("ERROR: Failed to create a new note\n");
-        return;
-    }
-
-    // I really wanted to check white spaces in name here, 
-    // but i didnt found how to, in a simple way.
-    snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
-   
-
+    
+    char *filename = pathlloc(category, name);
     if ((path_validation(filename)) == 0)
     {
         printf("File already exists!\n");
@@ -50,10 +39,9 @@ void new(char *category, char *name)
         free(filename);
         return;
     }
+
     fclose(fptr);
-
     open_editor(filename);
-
     free(filename);
 }
 
@@ -66,15 +54,7 @@ void edit(char* category, char *name)
         return;
     }
    
-    size_t size = sizeToNote(category, name) + 1;
-    char *filename = malloc(size);
-    if (filename == NULL)
-    {
-        printf("ERROR: Failed to edit the note\n");
-        return;
-    }
-    snprintf(filename, size + 1, "%s/%s/%s.md", notes_path, category, name);
-
+    char *filename = pathlloc(category, name);
     if ((path_validation(filename)) != 0)
     {
         printf("ERROR: File or directory not found!\n");
@@ -83,8 +63,6 @@ void edit(char* category, char *name)
     }
 
     open_editor(filename);
-
-
     return;
 }
 
@@ -121,7 +99,7 @@ int removeNote (char* category, char* name)
             printf("Only one charcter, please!\n");
             return -1;
         }
-        size_t size = sizeToNote(category, name);
+        size_t size = sizeCheck(category, name);
         char *dirpath = malloc(size);
 
         snprintf(dirpath, size, "%s/%s/", notes_path, category);
@@ -152,7 +130,7 @@ int removeNote (char* category, char* name)
         return EXIT_SUCCESS;
     }
 
-    size_t size = sizeToNote(category, name);
+    size_t size = sizeCheck(category, name);
     char *dirpath = malloc(size);
 
     snprintf(dirpath, size, "%s/%s/%s.md", notes_path, category, name);
