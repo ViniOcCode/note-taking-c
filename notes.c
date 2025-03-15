@@ -22,10 +22,7 @@ void new(char *category, char *name)
         name = "new_note";
     }
 
-    printf("chegue aqui");
     char *filename = pathlloc(category, name);
-    printf("%s", filename);
-
     if ((path_validation(filename)) == 0)
     {
         printf("File already exists!\n");
@@ -68,11 +65,54 @@ void edit(char* category, char *name)
     return;
 }
 
-void renameDir()
+void renameDir(char *category_name, char *name, char *newname)
 {
     // Edita o nome de um carta
     // talvez seja interessante deixar editar a categoria e as tags
 
+    if (category_name == NULL || name == NULL)  
+    {
+       printf("Usage: notes rename <category> <old name> <new name>\n.");
+       return;
+    }
+
+    if (newname == NULL)
+    {
+        // get the folder names
+        char *filepath = pathlloc(category_name, NULL);
+
+        // to pathlloc not put .md 
+        // we null the second argument
+
+        // get the desired folder name
+        char *filepath_name = pathlloc(name, NULL);
+
+        // and renamed it
+        if (rename(filepath, filepath_name) != 0)
+        {
+            printf("Was not possible rename directory.\n");
+            return;
+        }
+        printf("'%s' directory changed to '%s'\n", category_name, name); 
+
+        free(filepath);
+        free(filepath_name);
+        return;
+    }
+
+    // same thing, but here name its going to have
+    // an second argument in pathlloc to put .md in filenames
+    char *filepath = pathlloc(category_name, name);
+    char *filepath_name = pathlloc(category_name, newname);
+    if (rename(filepath, filepath_name) != 0)
+    {
+        printf("Was not possible rename directory.\n");
+        return;
+    }
+    printf("'%s' filenames changed to '%s'\n", name, newname);
+
+    free(filepath);
+    free(filepath_name);
     return;
 }
 
@@ -80,7 +120,7 @@ void removeNote(char* category, char* name)
 {
     if (category == NULL)
     {
-        printf("Category cant be null.\n");
+        printf("Usage: notes remove <category> <name>");
         return;
     }
 

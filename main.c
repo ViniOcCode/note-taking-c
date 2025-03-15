@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc == 1 || argc > 4)
+    if (argc == 1)
     {
         printf("Usage: Notes\n"
             "[new <category> <name>]\n"
@@ -34,6 +34,10 @@ int main(int argc, char *argv[])
     else if (strcmp(argv[1], "remove") == 0)
     {
         removeNote(argv[2],argv[3]);
+    }
+    else if (strcmp(argv[1], "rename") == 0)
+    {
+        renameDir(argv[2],argv[3], argv[4]);
     }
     else 
     { 

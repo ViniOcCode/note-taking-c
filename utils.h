@@ -27,7 +27,6 @@ int removerf(const char *path,
             int item_type,
             struct FTW *nftw_info);
 
-char* note_changes(char* category, char* name);
 const char* get_editor();
 char *pathlloc(char *category, char* name);
 

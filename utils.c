@@ -132,18 +132,6 @@ void create_category(char *category)
     free(category_path);
 }
 
-char *note_changes(char* category, char* name)
-{
-    if (category == NULL || name == NULL)
-    {
-        printf("Path invalid\n");
-        return NULL;
-    }
-
-    char *filename = pathlloc(category, name);
-    return filename;
-}
-
 const char* get_editor()
 {
     // Had to do change this because was
@@ -236,7 +224,7 @@ int handle_path(char *dirpath, char *category, char *name)
         }
         rmdir(dirpath);
 
-        printf("Directory '%s' removed sucessfully", category);
+        printf("Directory '%s' removed sucessfully.\n", category);
     }
     else
     {
