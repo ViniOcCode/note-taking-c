@@ -215,7 +215,6 @@ int confirm_removal(char *category, char *name)
 
 int handle_path(char *dirpath, char *category, char *name)
 {
-    printf("%s", dirpath);
     if (dirpath == NULL)
     {
         printf("ERROR: Finding file to remove.\n");
@@ -224,7 +223,6 @@ int handle_path(char *dirpath, char *category, char *name)
 
     if (path_validation(dirpath) != 0)
     {
-        printf("%s", dirpath);
         printf("%s already doesn't exist!\n", name ? "File" : "Directory");
         return -1;
     }
@@ -236,6 +234,8 @@ int handle_path(char *dirpath, char *category, char *name)
             perror("Couldn't pass directory\n");
             return EXIT_FAILURE;
         }
+        rmdir(dirpath);
+
         printf("Directory '%s' removed sucessfully", category);
     }
     else
