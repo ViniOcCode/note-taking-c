@@ -1,5 +1,6 @@
 #include "notes.h"
 #include "utils.h"
+#include "dirutils.h"
 
 // create a new note
 void new(char *category, char *name)

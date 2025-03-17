@@ -1,4 +1,6 @@
-/.venv
-/builddir
+**/.venv
+**/builddir
 *.cfg
 *.txt
+.dockerignore
+$*
