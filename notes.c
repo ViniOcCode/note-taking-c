@@ -36,7 +36,6 @@ void new(char *category, char *name)
     if (fptr == NULL)
     {
         printf("ERROR: File creation was not possible\n");
-        free(filename);
         return;
     }
 
@@ -125,10 +124,20 @@ void removeNote(char* category, char* name)
         return;
     }
 
-    if ((confirm_removal(category, name)) != 0)
-        return;
-
     char *dirpath = pathlloc(category, name);
+
+    if ((path_validation(dirpath)) != 0)
+    {
+        free(dirpath);
+        printf("Directory don't exists.\n");
+        return;
+    }
+
+    if ((confirm_removal(category, name)) != 0)
+    {    
+        free(dirpath);
+        return;
+    }
     handle_path(dirpath, category, name);
 
     free(dirpath);

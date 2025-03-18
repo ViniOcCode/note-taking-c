@@ -143,7 +143,7 @@ const char* get_editor()
 
     if ((editor == NULL || *editor == '\0') && (visual == NULL || *visual == '\0'))
     {
-        return "vim";
+        return "nano";
     }
     
     if (editor == NULL || *editor == '\0')
@@ -157,15 +157,14 @@ const char* get_editor()
 
 void open_editor(const char* filepath)
 {
-    size_t command_size =  snprintf(NULL, 0,"%s %s", get_editor(), filepath);
+    size_t command_size =  snprintf(NULL, 0,"%s \"%s\"", get_editor(), filepath);
     char *command = malloc(command_size + 1);
 
-    snprintf(command, command_size + 1,"%s %s", get_editor(), filepath);
+    snprintf(command, command_size + 1,"%s \"%s\"", get_editor(), filepath);
 
     if (system(command) != 0)
-    {
-        printf("Editor was not possible to open\n");
-    }
+        printf("Editor was not possible to open.\n");
+    
 
 }
 
@@ -186,6 +185,6 @@ int confirm_removal(char *category, char *name)
             printf("Operation canceled.\n");
             return -1;
         }
-        printf("Invalid input. Please enter 'y' or 'n'.\n");
+        printf("Invalid input. Please enter 'y' or 'n'.\n\n");
     }
 }
