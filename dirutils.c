@@ -92,64 +92,130 @@ void print_indent(int depth)
 {
     for (int i = 0; i < depth; i++)
     {
-        printf("|  ");
+        printf("|   ");
     }
 }
 
-void searchInDir(char *dirbase, char *word, int mode, int depth)
-{
+void print_oneline(char *dirbase, int depth) {
     DIR *dir = opendir(dirbase);
-    if (dir == NULL)
-    {
-        printf("ERROR: Failed to open directory.\n");
+    if (dir == NULL) {
+        printf("ERROR: Failed to open the directory '%s'.\n", dirbase);
         return;
     }
 
     struct dirent *entry;
     struct stat info;
 
-    while ((entry = readdir(dir)) != NULL)
-    {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-        {
+    print_indent(depth);
+    printf("%s:\n", dirbase);
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
-        
+
         char dirpath[MAX_PATH];
         snprintf(dirpath, MAX_PATH, "%s/%s", dirbase, entry->d_name);
 
-        if (stat(dirpath, &info) == -1)
-        {
-            printf("ERROR: Failed to search file.\n");
+        if (stat(dirpath, &info) == -1) {
+            printf("ERROR: It was not possible get info of '%s'.\n", dirpath);
             continue;
         }
 
-        if (mode == 0)
-        {
-            printf("%s\n", entry->d_name);
+        print_indent(depth + 1);
+        printf("%s\n", entry->d_name);
+
+        if (S_ISDIR(info.st_mode)) {
+            print_oneline(dirpath, depth + 1);
         }
-        else if(mode == 1)
-        {
-            print_indent(depth);
-            printf("|-- %s\n", entry->d_name);
-            print_indent(depth);
-            printf("|  Type: %s\n", S_ISDIR(info.st_mode) ? "Directory" : "File");
-            print_indent(depth);
-            printf("|  Size: %ld bytes\n", (long)info.st_size);
-            
-            if (S_ISREG(info.st_mode) && strstr(entry->d_name, ".md"))
-            {
-                print_indent(depth);
-                printf("|  ");
-                searchInFile(dirpath, NULL, mode);
-            }
-            print_indent(depth);
+    }
+
+    closedir(dir);
+}
+
+void print_full(char *dirbase, int depth) {
+    DIR *dir = opendir(dirbase);
+    if (dir == NULL) {
+        printf("ERROR: Failed to open directory '%s'.\n", dirbase);
+        return;
+    }
+
+    struct dirent *entry;
+    struct stat info;
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
         }
 
-        if (S_ISDIR(info.st_mode))
-        {
-            searchInDir(dirpath, word, mode, depth + 1);
+        char dirpath[MAX_PATH];
+        snprintf(dirpath, MAX_PATH, "%s/%s", dirbase, entry->d_name);
+
+        if (stat(dirpath, &info) == -1) {
+            printf("ERROR: Failed to get info for '%s'.\n", dirpath);
+            continue;
+        }
+
+        print_indent(depth);
+        printf("|-- %s\n", entry->d_name);
+        print_indent(depth);
+        printf("|   Type: %s\n", S_ISDIR(info.st_mode) ? "Directory" : "File");
+        print_indent(depth);
+        printf("|   Size: %ld bytes\n", (long)info.st_size);
+        if (S_ISREG(info.st_mode) && strstr(entry->d_name, ".md")) {
+            print_indent(depth);
+            printf("|   ");
+            searchInFile(dirpath, NULL, 1);
+        }
+        print_indent(depth);
+        printf("|\n");
+
+        if (S_ISDIR(info.st_mode)) {
+            print_full(dirpath, depth + 1);
         }
     }
     closedir(dir);
+}
+
+void search_word(char *dirbase, char *word) {
+    DIR *dir = opendir(dirbase);
+    if (dir == NULL) {
+        printf("ERROR: Failed to open directory '%s'.\n", dirbase);
+        return;
+    }
+
+    struct dirent *entry;
+    struct stat info;
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        char dirpath[MAX_PATH];
+        snprintf(dirpath, MAX_PATH, "%s/%s", dirbase, entry->d_name);
+
+        if (stat(dirpath, &info) == -1) {
+            printf("ERROR: Failed to get info for '%s'.\n", dirpath);
+            continue;
+        }
+
+        if (S_ISDIR(info.st_mode)) {
+            search_word(dirpath, word);
+        } else if (S_ISREG(info.st_mode) && strstr(entry->d_name, ".md")) {
+            printf("Searching in: %s\n", dirpath);
+            searchInFile(dirpath, word, 2);
+        }
+    }
+    closedir(dir);
+}
+
+void searchInDir(char *dirbase, char *word, int mode, int depth) {
+    if (mode == 0) {
+        print_oneline(dirbase, depth);
+    } else if (mode == 1) {
+        print_full(dirbase, depth);
+    } else if (word != NULL) {
+        search_word(dirbase, word);
+    }
 }

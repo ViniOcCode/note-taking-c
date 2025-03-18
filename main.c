@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     // Processa comandos
     if (strcmp(argv[1], "new") == 0)
     {
-        if (check_args(argc, 4, "new"))
+        if (check_args(argc, 4, "new") == 0)
         {
             new (argv[2], argv[3]);
         }
@@ -39,21 +39,21 @@ int main(int argc, char *argv[])
     }
     else if (strcmp(argv[1], "remove") == 0)
     {
-        if (check_args(argc, 4, "remove"))
+        if (check_args(argc, 4, "remove") == 0)
         {
             removeNote(argv[2], argv[3]);
         }
     }
     else if (strcmp(argv[1], "rename") == 0)
     {
-        if (check_args(argc, 5, "rename"))
+        if (check_args(argc, 5, "rename") == 0)
         {
             renameDir(argv[2], argv[3], argv[4]);
         }
     }
     else if (strcmp(argv[1], "backlink") == 0)
     {
-        if (check_args(argc, 3, "backlink"))
+        if (check_args(argc, 3, "backlink") == 0)
         {
             backlink(argv[2]);
         }
@@ -62,8 +62,7 @@ int main(int argc, char *argv[])
     {
         if (argc < 3)
         {
-            printf("Error: 'ls' requires an option (--oneline or --full).\n");
-            print_usage();
+            printf("Error: 'ls' requires an option (--oneline or --full).\nUse [notes --help] to see more.\n");
         }
         else if (strcmp(argv[2], "--oneline") == 0)
         {
@@ -73,16 +72,18 @@ int main(int argc, char *argv[])
         {
             searchInDir(notes_path, NULL, 1, 0); // Modo full
         }
+        else if (strcmp(argv[1], "--help") == 0)
+        {
+            print_usage();
+        }
         else
         {
-            printf("Error: Unknown option '%s' for 'ls'.\n", argv[2]);
-            print_usage();
+            printf("Error: Unknown option '%s' for 'ls'.\nUse [notes --help] to see more\n", argv[2]);
         }
     }
     else
     {
-        printf("Error: Unknown command '%s'.\n", argv[1]);
-        print_usage();
+        printf("Error: Unknown command '%s'.\nUse [notes --help] to see more.\n", argv[1]);
     }
     free(notes_path);
    
@@ -109,5 +110,5 @@ int check_args(int argc, int expected, const char *command)
         printf("ERROR: '%s' only holds %d arguments.\n", command, expected - 2);
         return 0;
     }
-    return 1;
+    return 0;
 }
