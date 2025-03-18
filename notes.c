@@ -144,9 +144,16 @@ void removeNote(char* category, char* name)
     return; 
 }
 
-void backlink (char* keyword) {
-    
-    // verifica por uma keyword em todas as notas
+void backlink (char* keyword) 
+{
+    if (keyword == NULL) 
+    {
+        printf("usage: notes backlink <keyword>");
+        return;
+    }
+
+    printf("Searching for '%s' in '%s' ... \n", keyword, notes_path);
+    searchInDir(notes_path, keyword);
 
     return;
 }

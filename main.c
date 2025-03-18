@@ -25,28 +25,32 @@ int main(int argc, char *argv[])
     // Validações das funções
     if (strcmp(argv[1], "new") == 0)
     {
-        new(argv[2],argv[3]);
+        new (argv[2], argv[3]);
     }
     else if (strcmp(argv[1], "edit") == 0)
     {
-        edit(argv[2],argv[3]);
+        edit(argv[2], argv[3]);
     }
     else if (strcmp(argv[1], "remove") == 0)
     {
-        removeNote(argv[2],argv[3]);
+        removeNote(argv[2], argv[3]);
     }
     else if (strcmp(argv[1], "rename") == 0)
     {
-        renameDir(argv[2],argv[3], argv[4]);
+        renameDir(argv[2], argv[3], argv[4]);
     }
-    else 
-    { 
+    else if (strcmp(argv[1], "backlink") == 0)
+    {
+        backlink(argv[2]);
+    }
+    else
+    {
         printf("Usage: Notes\n"
-        "[new <category> <name>]\n"
-        "[edit <category> <name>]\n"
-        "[remove <category> <name>]\n"
-        "[ls --oneline]\n"
-        "[ls --full]\n");
+               "[new <category> <name>]\n"
+               "[edit <category> <name>]\n"
+               "[remove <category> <name>]\n"
+               "[ls --oneline]\n"
+               "[ls --full]\n");
     }
 
     free(notes_path);
