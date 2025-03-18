@@ -9,8 +9,8 @@
 
 extern char *notes_path;
 
-void init_notes_directory();
-void init_home_path();
+int init_notes_directory();
+int init_home_path();
 void create_category(char *category);
 void open_editor(const char* filepath);
 

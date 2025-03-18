@@ -9,7 +9,6 @@ size_t sizeCheck(char *category, char *name)
         printf("ERROR: NULL category\n");
         return 0;
     }
-    
     if (name == NULL || *name == '\0')
     {
         return snprintf(NULL, 0, "%s/%s/", notes_path, category);
@@ -76,36 +75,38 @@ int path_validation(char* path)
     return 0;
 }
 
-void init_home_path()
+int init_home_path()
 {
     const char *home = getenv("HOME");
     if (home == NULL) 
     {
         printf("ERROR: Was not possible to reach %s\n", home);
-        return;
+        return -1;
     }
 
     size_t len = strlen(home) + strlen("/notes") + 1;
-
     notes_path = malloc(len);
     if (notes_path == NULL)
     {
         printf("ERROR: Failed to check home path\n");
         free(notes_path);
-        return;
+        return -1;
     }
     snprintf(notes_path, len,"%s/notes", home);
+    return 0;
 }
 
-void init_notes_directory()
+int init_notes_directory()
 {
    if (path_validation(notes_path) != 0) 
    {
         if (mkdir(notes_path, 0777) != 0)
         {
            printf("ERROR: Was not possible reach notes directory\n");
+           return -1;
         }
    }
+   return 0;
 }
 
 void create_category(char *category)
@@ -128,7 +129,6 @@ void create_category(char *category)
     {
         printf("ERROR: Was not possible to reach file\n");
     }
-
     free(category_path);
 }
 
@@ -145,13 +145,10 @@ const char* get_editor()
     {
         return "nano";
     }
-    
     if (editor == NULL || *editor == '\0')
     {
         return visual;
     }
-
-
     return editor;
 }
 

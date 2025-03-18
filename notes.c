@@ -49,7 +49,7 @@ void edit(char* category, char *name)
 {
     if (category == NULL)
     {
-        printf("Usage: note edit <category> <name>\n");
+        open_editor(notes_path);
         return;
     }
    
@@ -78,15 +78,20 @@ void renameDir(char *category_name, char *name, char *newname)
 
     if (newname == NULL)
     {
-        // get the folder names
-        char *filepath = pathlloc(category_name, NULL);
+         // get the desired folder name       // get the folder names
+         char *filepath_name = pathlloc(name, NULL);
+
+        if (path_validation(filepath_name) == 0)
+        {
+            printf("This directory's name is already being used.\n");
+            return;
+        }
 
         // to pathlloc not put .md 
         // we null the second argument
 
-        // get the desired folder name
-        char *filepath_name = pathlloc(name, NULL);
-
+        // get the older name
+        char *filepath = pathlloc(category_name, NULL);
         // and renamed it
         if (rename(filepath, filepath_name) != 0)
         {
@@ -153,21 +158,7 @@ void backlink (char* keyword)
     }
 
     printf("Searching for '%s' in '%s' ... \n", keyword, notes_path);
-    searchInDir(notes_path, keyword);
-
-    return;
-}
-
-void oneline (void) {
-
-    // ls com oneline, vai mostrar todas as categorias e notas
-
-    return;
-}
-
-void full (void) {
-
-    // ls com full, vai mostrar todas as categorias e notas com preview de 5 linhas
+    searchInDir(notes_path, keyword, 2, 0);
 
     return;
 }

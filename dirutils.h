@@ -13,7 +13,7 @@ int removerf(const char *path,
             int item_type,
             struct FTW *nftw_info);
 
-void searchInFile(char *filepath, char *word);
-void searchInDir(char *dirbase, char *word);
+void searchInFile(char *filepath, char *word, int mode);
+void searchInDir(char *dirbase, char *word, int mode, int depth);
 
 #endif

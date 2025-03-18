@@ -52,7 +52,7 @@ int handle_path(char *dirpath, char *category, char *name)
     return EXIT_SUCCESS;
 }
 
-void searchInFile(char *filepath, char *word)
+void searchInFile(char *filepath, char *word, int mode)
 {
     FILE *file = fopen(filepath, "r");
     if (file == NULL)
@@ -63,19 +63,40 @@ void searchInFile(char *filepath, char *word)
 
     char line[MAX_LINE];
     int linenumber = 0;
-
-    while (fgets(line, MAX_LINE, file) != NULL)
+    
+    if (mode == 1)
     {
-        linenumber++;
-        if (strstr(line, word) != NULL)
+        printf("First 5 lines:\n");
+        while (fgets(line, MAX_LINE, file) != NULL && linenumber < 5)
         {
-            printf("Found in '%s', line %d: %s", filepath, linenumber, line);
+            linenumber++;
+            printf("    Line %d: %s", linenumber, line);
         }
     }
+    else if (word != NULL)
+    {
+        while (fgets(line, MAX_LINE, file) != NULL)
+        {
+            linenumber++;
+            if (strstr(line, word) != NULL)
+            {
+                printf("Found in '%s', line %d: %s", filepath, linenumber, line);
+            }
+        }
+    }
+
     fclose(file);
 }
 
-void searchInDir(char *dirbase, char *word)
+void print_indent(int depth)
+{
+    for (int i = 0; i < depth; i++)
+    {
+        printf("|  ");
+    }
+}
+
+void searchInDir(char *dirbase, char *word, int mode, int depth)
 {
     DIR *dir = opendir(dirbase);
     if (dir == NULL)
@@ -103,16 +124,32 @@ void searchInDir(char *dirbase, char *word)
             continue;
         }
 
+        if (mode == 0)
+        {
+            printf("%s\n", entry->d_name);
+        }
+        else if(mode == 1)
+        {
+            print_indent(depth);
+            printf("|-- %s\n", entry->d_name);
+            print_indent(depth);
+            printf("|  Type: %s\n", S_ISDIR(info.st_mode) ? "Directory" : "File");
+            print_indent(depth);
+            printf("|  Size: %ld bytes\n", (long)info.st_size);
+            
+            if (S_ISREG(info.st_mode) && strstr(entry->d_name, ".md"))
+            {
+                print_indent(depth);
+                printf("|  ");
+                searchInFile(dirpath, NULL, mode);
+            }
+            print_indent(depth);
+        }
+
         if (S_ISDIR(info.st_mode))
         {
-            searchInDir(dirpath, word);
-        }
-        else if(S_ISREG(info.st_mode) && strstr(entry->d_name, ".md"))
-        {
-            printf("Searching in: %s\n", dirpath);
-            searchInFile(dirpath, word);
+            searchInDir(dirpath, word, mode, depth + 1);
         }
     }
-
     closedir(dir);
 }
