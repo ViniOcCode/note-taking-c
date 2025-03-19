@@ -1,8 +1,0 @@
-[
-  {
-    "directory": "/home/vinicius/note-taking-c/builddir",
-    "command": "cc -Inote.p -I. -I.. -fdiagnostics-color=always -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -O0 -g -MD -MQ note.p/note.c.o -MF note.p/note.c.o.d -o note.p/note.c.o -c ../note.c",
-    "file": "../note.c",
-    "output": "note.p/note.c.o"
-  }
-]

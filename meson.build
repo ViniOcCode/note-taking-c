@@ -1,2 +1,6 @@
-project('note', 'c')
-executable('note','note.c')
+project('notes', 'c')
+executable('notes', 'main.c', 
+                    'notes.c', 
+                    'utils.c', 
+                    'dirutils.c'
+                    )
