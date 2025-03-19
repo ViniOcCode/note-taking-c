@@ -1,2 +1,1 @@
-meson 1.7.0 Python
-ninja 1.11.1 Linux
+meson 1.7.0 
