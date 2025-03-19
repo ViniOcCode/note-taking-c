@@ -101,4 +101,4 @@ Displays detailed information, including the content of the notes.
 
 ---
 
-If you need more help or further adjustments, just let me know! 😊🚀
+If you need more help or further adjustments, just let me know!
