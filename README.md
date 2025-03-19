@@ -1,27 +1,89 @@
 # What is note-taking-c?
 
-Note Taking in C is what the name suggests, a note taking application all made in C.
+Note-taking-c is exactly what the name suggests—a note-taking application entirely written in C.
 
-# Why?
+## Why?
 
-This was made just for a project to the Final Project of CS50 2025 of Harvard!
+This project was developed as a Final Project for Harvard's CS50 2025!  
+Most of the time, I had no idea what I was doing. Therefore, if you find something horrendous or awful that violates all coding principles, feel free to make your own modifications!
 
-Most of the code, i has clueless of what i was doing, therefor, if you find something horrendous and awful that violates all of principles of code, you are more than invite to do yours alterations!
+---
 
-# Docker!
+## Docker!
 
-Compiling in C it's a bit tedious, so i have a docker image that installs all of you need to run inside a container!
+Compiling C programs can be a bit tedious, so I've prepared a Docker image that installs everything you need to run the application inside a container.
 
 ### How to use it
 
-First of all, you have to be sure you have docker correctly installed!
-
-In you prefered terminal, run the following commands:
+First, make sure you have Docker properly installed.  
+Then, in your preferred terminal, run the following commands:
 
 ```bash
-
-$ git clone https://github.com/ViniOcCode/note-taking-c.git
-$ cd note-taking-c
-$ docker run --rm -v $(pwd):/app -it vinioc/note-taking-c bash
-
+git clone https://github.com/ViniOcCode/note-taking-c.git
+cd note-taking-c
+docker run --rm -v $(pwd):/app -it vinioc/note-taking-c bash
 ```
+
+This way, you can use the application without installing Python, Python venv, Meson, and Ninja on your system.
+
+---
+
+## USING THE APPLICATION WITH DOCKER
+
+Every time you want to use the application, execute the following command:
+
+```bash
+./builddir/notes <command> <args>
+```
+
+---
+
+## NOTES COMMANDS
+
+### **new <category> <name>** — Create a new note
+
+Creating a note is simple. You need to specify a category (the folder where the note will be created).  
+You can choose a name for the note; if no name is provided, it will default to `new_note.md`.
+
+### **edit <category> <name>** — Edit an existing note
+
+Editing follows the same logic. Specify the category and note name to open it.  
+If you just use the `edit` command without arguments, it will open the main notes folder.
+
+### **remove <category> <name>** — Remove a note
+
+You can remove an entire category folder with all its notes or just a specific note.
+
+### **rename <old> <new> <newnamenote>** — Rename a category or note
+
+The `rename` command might seem a bit confusing, but it's the best approach I could think of.  
+
+- If you provide **two arguments** (`<old>` and `<new>`), you are renaming a folder:
+
+```bash
+notes rename oldname newname
+```
+This renames the folder `oldname` to `newname`.
+
+- If you provide **three arguments** (`<folder> <old>` and `<new>`), you are renaming a note inside a folder:
+
+```bash
+notes rename folder oldname newname
+```
+This renames the note `oldname.md` to `newname.md` inside the `folder`.
+
+### **backlink <keyword>** — Search for a given keyword
+
+Provide a keyword to find where it appears across your notes.
+
+### **ls --oneline** — List notes in a simple format
+
+Displays a list of categories and notes in a straightforward, one-line format.
+
+### **ls --full** — List notes with details
+
+Displays detailed information, including the content of the notes.
+
+---
+
+If you need more help or further adjustments, just let me know! 😊🚀
