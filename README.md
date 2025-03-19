@@ -1,11 +1,17 @@
+# DISCLAIMER 
+
+This was made by me, and only in 1 week for CS50.
+Most of the time, I had no idea what I was doing. Therefore, if you find something horrendous or awful that violates all coding principles, feel free to make your own modifications!
+
 # What is note-taking-c?
 
 Note-taking-c is exactly what the name suggests—a note-taking application entirely written in C.
 
+---
+
 ## Why?
 
 This project was developed as a Final Project for Harvard's CS50 2025!  
-Most of the time, I had no idea what I was doing. Therefore, if you find something horrendous or awful that violates all coding principles, feel free to make your own modifications!
 
 ---
 
@@ -15,13 +21,21 @@ Compiling C programs can be a bit tedious, so I've prepared a Docker image that 
 
 ### How to use it
 
-First, make sure you have Docker properly installed.  
+First, make sure you have Docker properly installed.
 Then, in your preferred terminal, run the following commands:
 
 ```bash
 git clone https://github.com/ViniOcCode/note-taking-c.git
 cd note-taking-c
-docker run --rm -v $(pwd):/app -it vinioc/note-taking-c bash
+docker run --rm -v $(pwd):/app -it vinioc/note-taking-c
+```
+
+In Powershell is the same thing but, you have change (pwd) to {pwd}:
+
+```powershell
+git clone https://github.com/ViniOcCode/note-taking-c.git
+cd note-taking-c
+docker run --rm -v ${pwd}:/app -it vinioc/note-taking-c
 ```
 
 This way, you can use the application without installing Python, Python venv, Meson, and Ninja on your system.
@@ -33,6 +47,7 @@ This way, you can use the application without installing Python, Python venv, Me
 Every time you want to use the application, execute the following command:
 
 ```bash
+meson setup builddir && ninja -C builddir
 ./builddir/notes <command> <args>
 ```
 
