@@ -48,7 +48,7 @@ Every time you want to use the application, execute the following command:
 
 ```bash
 meson setup builddir && ninja -C builddir
-export EDITOR=vim  # set you favorite terminal
+export EDITOR=vim  # set you favorite text editor
 ./builddir/notes <command> <args>
 ```
 
