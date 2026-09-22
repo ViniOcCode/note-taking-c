@@ -10,8 +10,14 @@ RUN apk update && \
     vim \
     bash
 
-
-# When repo stay public just use this
 WORKDIR /app
 
 RUN pip3 install meson --break-system-packages
+
+COPY . .
+
+RUN meson setup builddir && meson compile -C builddir
+
+ENV EDITOR=vim
+
+ENTRYPOINT ["/app/builddir/notes"]

@@ -1,105 +1,142 @@
-# DISCLAIMER 
+# Note Taking C
 
-This was made by me, and only in 1 week for CS50.
-Most of the time, I had no idea what I was doing. Therefore, if you find something horrendous or awful that violates all coding principles, feel free to make your own modifications!
+[![Build and test](https://github.com/ViniOcCode/note-taking-c/actions/workflows/tests.yml/badge.svg)](https://github.com/ViniOcCode/note-taking-c/actions/workflows/tests.yml)
 
-# What is note-taking-c?
+A small filesystem-first note manager written in C. Notes are plain Markdown files organized into category directories, so they remain readable and editable without the application.
 
-Note-taking-c is exactly what the name suggests—a note-taking application entirely written in C.
+This was my final project for **Harvard CS50x 2025**. I built it to practice command-line interface design, manual memory management, filesystem traversal, process integration, and portable build tooling.
 
----
+## Features
 
-## Why?
+- Creates Markdown notes inside category folders.
+- Opens notes with the editor configured in `EDITOR` or `VISUAL`.
+- Lists the note tree in compact or detailed form.
+- Shows file metadata and a preview of Markdown files in detailed listings.
+- Searches every Markdown note for backlinks or keywords.
+- Renames categories or individual notes.
+- Removes notes or category trees after interactive confirmation.
+- Stores everything under `$HOME/notes`.
+- Includes end-to-end CLI tests for argument handling and core file creation.
 
-This project was developed as a Final Project for Harvard's CS50 2025!  
+## Commands
 
----
+```text
+notes new <category> [name]
+notes edit [category] [name]
+notes remove <category> [name]
+notes rename <old-category> <new-category>
+notes rename <category> <old-note> <new-note>
+notes backlink <keyword>
+notes ls --oneline
+notes ls --full
+notes --help
+```
 
-## Docker!
+When `name` is omitted from `new`, the file is created as `new_note.md`. Running `edit` without a category opens the main notes directory.
 
-Compiling C programs can be a bit tedious, so I've prepared a Docker image that installs everything you need to run the application inside a container.
+## Build locally
 
-### How to use it
+The application targets POSIX-compatible systems such as Linux and macOS.
 
-First, make sure you have Docker properly installed.
-Then, in your preferred terminal, run the following commands:
+### Requirements
+
+- A C11 compiler
+- Meson
+- Ninja
+- A terminal editor such as Vim or Nano
 
 ```bash
 git clone https://github.com/ViniOcCode/note-taking-c.git
 cd note-taking-c
-docker run --rm -v $(pwd):/app -it vinioc/note-taking-c
+meson setup builddir
+meson compile -C builddir
+export EDITOR=vim
+./builddir/notes --help
 ```
 
-In Powershell is the same thing but, you have change (pwd) to {pwd}:
-
-```powershell
-git clone https://github.com/ViniOcCode/note-taking-c.git
-cd note-taking-c
-docker run --rm -v ${pwd}:/app -it vinioc/note-taking-c
-```
-
-This way, you can use the application without installing Python, Python venv, Meson, and Ninja on your system.
-
----
-
-## USING THE APPLICATION WITH DOCKER
-
-Every time you want to use the application, execute the following command:
+Run the tests with:
 
 ```bash
-meson setup builddir && ninja -C builddir
-export EDITOR=vim  # set you favorite text editor
-./builddir/notes <command> <args>
+meson test -C builddir --print-errorlogs
 ```
 
----
+## Docker
 
-## NOTES COMMANDS
-
-### **new <category> <name>** — Create a new note
-
-Creating a note is simple. You need to specify a category (the folder where the note will be created).  
-You can choose a name for the note; if no name is provided, it will default to `new_note.md`.
-
-### **edit <category> <name>** — Edit an existing note
-
-Editing follows the same logic. Specify the category and note name to open it.  
-If you just use the `edit` command without arguments, it will open the main notes folder.
-
-### **remove <category> <name>** — Remove a note
-
-You can remove an entire category folder with all its notes or just a specific note.
-
-### **rename <old> <new> <newnamenote>** — Rename a category or note
-
-The `rename` command might seem a bit confusing, but it's the best approach I could think of.  
-
-- If you provide **two arguments** (`<old>` and `<new>`), you are renaming a folder:
+Build the image:
 
 ```bash
-notes rename oldname newname
+docker build -t note-taking-c .
 ```
-This renames the folder `oldname` to `newname`.
 
-- If you provide **three arguments** (`<folder> <old>` and `<new>`), you are renaming a note inside a folder:
+List notes while persisting them on the host:
 
 ```bash
-notes rename folder oldname newname
+mkdir -p "$HOME/notes"
+docker run --rm -it \
+  -v "$HOME/notes:/root/notes" \
+  note-taking-c ls --oneline
 ```
-This renames the note `oldname.md` to `newname.md` inside the `folder`.
 
-### **backlink <keyword>** — Search for a given keyword
+Create or edit a note interactively:
 
-Provide a keyword to find where it appears across your notes.
+```bash
+docker run --rm -it \
+  -v "$HOME/notes:/root/notes" \
+  note-taking-c new learning c-notes
+```
 
-### **ls --oneline** — List notes in a simple format
+The image uses Vim as its default editor.
 
-Displays a list of categories and notes in a straightforward, one-line format.
+## How it works
 
-### **ls --full** — List notes with details
+```text
+CLI dispatcher (main.c)
+    -> note operations (notes.c)
+    -> path/editor helpers (utils.c)
+    -> recursive filesystem operations (dirutils.c)
+    -> $HOME/notes/*.md
+```
 
-Displays detailed information, including the content of the notes.
+The project deliberately uses the local filesystem rather than a database. This keeps the data portable and makes the storage model easy to inspect.
 
----
+## Project structure
 
-If you need more help or further adjustments, just let me know!
+```text
+main.c          Command parsing and dispatch
+notes.c         Create, edit, rename, remove, and search operations
+utils.c         Paths, directories, editor selection, and confirmation
+dirutils.c      Recursive listing, preview, search, and removal
+meson.build     Build and test definition
+tests/          End-to-end CLI behavior checks
+Dockerfile      Reproducible Linux build and runtime
+```
+
+## Scope and limitations
+
+This is an educational CLI project. It currently assumes POSIX filesystem APIs, delegates editing to an external terminal editor, and is intended for local single-user notes rather than synchronized or encrypted data.
+
+## License
+
+[MIT](LICENSE)
+
+<details>
+<summary><strong>Português</strong></summary>
+
+## Sobre o projeto
+
+O Note Taking C é um gerenciador de anotações em terminal escrito em C. As notas são arquivos Markdown comuns, organizados por categorias dentro de `$HOME/notes`.
+
+O projeto foi desenvolvido como meu trabalho final do **Harvard CS50x 2025**, com foco em interface de linha de comando, gerenciamento manual de memória, navegação do sistema de arquivos e integração com editores externos.
+
+### Principais recursos
+
+- Criação e edição de notas Markdown.
+- Organização por diretórios de categoria.
+- Listagem simples ou detalhada, com metadados e prévia.
+- Busca de palavras em todas as notas.
+- Renomeação e remoção com confirmação.
+- Build com Meson/Ninja, execução com Docker e testes da CLI.
+
+O programa foi projetado para sistemas compatíveis com POSIX, como Linux e macOS.
+
+</details>
